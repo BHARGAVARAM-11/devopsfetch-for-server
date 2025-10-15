@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+import argparse
+import subprocess
+import os
+import re
+import sys
+from datetime import datetime
+from tabulate import tabulate
+
+LOG_PATH = "logs/devopsfetch.log"
+
+def log_activity(activity):
+    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+    with open(LOG_PATH, "a") as log:
+        log.write(f"{datetime.now().isoformat()} - {activity}\n")
+
+# ------------------ PORTS INFO ------------------
+def ports_info(port=None):
+    if sys.platform.startswith("win"):
+        # Windows: use netstat
+        cmd = "netstat -ano"
+        if port:
+            cmd += f" | findstr :{port}"
+    else:
+        # Linux/macOS
+        cmd = f"ss -lntup"
+        if port:
+            cmd += f" | grep :{port}"
+    
+    result = subprocess.getoutput(cmd)
+    lines = result.strip().split('\n')
+    if not lines:
+        print(f"No active ports found{' for port ' + port if port else ''}.")
+        return
+
+    headers = ["Proto", "Recv-Q", "Send-Q", "Local Address:Port", "Peer Address:Port", "State", "PID/Program name"]
+    rows = []
+    for line in lines:
+        line = re.split(r'\s+', line.strip())
+        if line and not line[0].startswith("Proto"):
+            # Pad rows if shorter than headers
+            while len(line) < len(headers):
+                line.append('')
+            rows.append(line[:len(headers)])
+    
+    print(tabulate(rows, headers=headers, tablefmt="github"))
+    log_activity(f"Ports info queried {'for port ' + port if port else 'all ports'}")
+
+# ------------------ DOCKER INFO ------------------
+def docker_info(container=None):
+    try:
+        if container:
+            cmd = f"docker inspect {container}"
+            print(subprocess.getoutput(cmd))
+        else:
+            images = subprocess.getoutput("docker images --format '{{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Size}}'")
+            containers = subprocess.getoutput("docker ps -a --format '{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'")
+            
+            if images:
+                print("Docker Images:")
+                print(tabulate([i.split('\t') for i in images.split('\n') if i], 
+                               headers=["Repository:Tag", "ID", "Size"], tablefmt="github"))
+            
+            if containers:
+                print("\nDocker Containers:")
+                print(tabulate([c.split('\t') for c in containers.split('\n') if c], 
+                               headers=["Name", "Image", "Status", "Ports"], tablefmt="github"))
+        
+        log_activity(f"Docker info queried {'for container ' + container if container else 'all containers'}")
+    except Exception as e:
+        print(f"Error fetching Docker info: {e}")
+
+# ------------------ NGINX INFO (Linux only) ------------------
+def nginx_info(domain=None):
+    if sys.platform.startswith("win"):
+        print("Nginx info is only available on Linux/macOS.")
+        return
+    
+    nginx_conf_dir = '/etc/nginx/sites-enabled'
+    if not os.path.isdir(nginx_conf_dir):
+        print(f"Nginx config directory {nginx_conf_dir} does not exist.")
+        return
+
+    rows = []
+    for f in os.listdir(nginx_conf_dir):
+        path = os.path.join(nginx_conf_dir, f)
+        with open(path) as conf:
+            content = conf.read()
+            server_names = re.findall(r'server_name\s+([^;]+);', content)
+            listen_ports = re.findall(r'listen\s+([0-9]+);', content)
+            if domain:
+                if domain in ' '.join(server_names):
+                    print(f"Conf file: {f}\n\n{content}")
+                    log_activity(f"Nginx config for {domain}")
+                    return
+            else:
+                for name in server_names:
+                    for port in listen_ports:
+                        rows.append([name.strip(), port, f])
+    
+    if not domain:
+        if rows:
+            print(tabulate(rows, headers=["Domain", "Port", "ConfigFile"], tablefmt="github"))
+        else:
+            print("No Nginx domains found.")
+        log_activity("Nginx info for all domains")
+
+# ------------------ USERS INFO ------------------
+def users_info(user=None):
+    try:
+        if sys.platform.startswith("win"):
+            # Windows: use 'query user'
+            result = subprocess.getoutput("query user")
+            lines = result.strip().split('\n')[1:]  # Skip header
+            rows = []
+            for l in lines:
+                parts = re.split(r'\s+', l.strip())
+                rows.append(parts)
+            headers = ["USERNAME", "SESSIONNAME", "ID", "STATE", "IDLE TIME", "LOGON TIME"]
+        else:
+            # Linux/macOS: use 'lastlog'
+            result = subprocess.getoutput("lastlog")
+            lines = result.strip().split('\n')[1:]  # Skip header
+            rows = [re.split(r'\s+', l.strip()) for l in lines if l.strip()]
+            headers = ["Username", "Port", "From", "Latest"]
+        
+        if user:
+            rows = [r for r in rows if r[0].lower() == user.lower()]
+            if not rows:
+                print(f"No info for user {user}")
+                return
+        
+        print(tabulate(rows, headers=headers, tablefmt="github"))
+        log_activity(f"Users info queried {'for user ' + user if user else 'all users'}")
+    except Exception as e:
+        print(f"Error fetching users info: {e}")
+
+# ------------------ LOG TIME RANGE ------------------
+def activities_time_range(start, end):
+    if not os.path.exists(LOG_PATH):
+        print("No logs found.")
+        return
+    
+    with open(LOG_PATH, "r") as log:
+        for line in log:
+            try:
+                t = datetime.fromisoformat(line[:19])
+                if start <= t <= end:
+                    print(line.strip())
+            except ValueError:
+                continue
+
+# ------------------ MAIN ------------------
+def main():
+    parser = argparse.ArgumentParser(description='devopsfetch: Server Information Retrieval Tool')
+    parser.add_argument('-p', '--port', nargs='?', const=True, help='Show all active ports or details for a port')
+    parser.add_argument('-d', '--docker', nargs='?', const=True, help='Show Docker images and containers or details for one')
+    parser.add_argument('-n', '--nginx', nargs='?', const=True, help='Show Nginx domains or details for one')
+    parser.add_argument('-u', '--users', nargs='?', const=True, help='Show users and logins or details for one')
+    parser.add_argument('-t', '--time', nargs=2, metavar=('START', 'END'), help='Show activities between START and END (YYYY-MM-DD HH:MM:SS)')
+    args = parser.parse_args()
+
+    if args.port:
+        ports_info(args.port if isinstance(args.port, str) else None)
+    if args.docker:
+        docker_info(args.docker if isinstance(args.docker, str) else None)
+    if args.nginx:
+        nginx_info(args.nginx if isinstance(args.nginx, str) else None)
+    if args.users:
+        users_info(args.users if isinstance(args.users, str) else None)
+    if args.time:
+        try:
+            start, end = [datetime.fromisoformat(x) for x in args.time]
+            activities_time_range(start, end)
+        except Exception:
+            print("Invalid date format. Use YYYY-MM-DDTHH:MM:SS")
+
+if __name__ == '__main__':
+    main()
+

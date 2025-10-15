@@ -1,0 +1,13 @@
+[Unit]
+Description=DevOpsFetch System Information Monitor
+After=network.target docker.service
+
+[Service]
+ExecStart=/usr/bin/python3 /home/saainikhil/devopsfetch/devopsfetch.py -p -d -n -u
+Restart=always
+StandardOutput=append:/var/log/devopsfetch.log
+StandardError=append:/var/log/devopsfetch.log
+
+[Install]
+WantedBy=multi-user.target
+
