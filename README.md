@@ -11,8 +11,7 @@
 |-Nginx Viewer	            | Show configured domains, ports, and server blocks.|
 |-User Tracking	       |    List users and their last login times.|
 |-Time-based Queries       | Display logs for a specific time range.|
-|-Continuous Monitoring	  | Run as a systemd service, logging automatically to
-                              /opt/devopsfetch/logs/devopsfetch.log.|
+|-Continuous Monitoring	  | Run as a systemd service, logging automatically to   /opt/devopsfetch/logs/devopsfetch.log.|
 |-Formatted Output         |  Uses tabulate for easy-ommands and options.|
 |-Help Flag (-h)	       |    Quick reference for all c|
 ##Project structure
@@ -57,7 +56,7 @@ Now you can run:
 `
 devopsfetch -p
 `
- Usage Examples
+## Usage Examples
 |Command|	|Description|
 |-------| |-----------|
 |`devopsfetch -p`|	|List all active ports|
@@ -70,7 +69,7 @@ devopsfetch -p
 |`devopsfetch -u`| |username	Show info for a specific user|
 |`devopsfetch -t "2025-10-09 10:00:00" "2025-10-09 12:00:00"`|	|Show logs between two timestamps|
   
-  ## LOgs##
+  ## LOgs
 
 Logs are stored at:
 `
