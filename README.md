@@ -1,20 +1,21 @@
-#DevOpsFetch — Server Information Retrieval & Monitoring Tool#
+#DevOpsFetch — Server Information Retrieval & Monitoring Tool
 
-##objective##
+##objective
      DevOpsFetch is a command-line tool designed for DevOps engineers to retrieve, display, and monitor critical server information. It provides real-time insights into active ports, Docker containers, Nginx configurations, and user logins, with integrated logging and 
 
-##Features##
- ###Module###	                  ###Description###
--Port Monitoring	          List all active ports & services, or inspect a specific port.
--Docker Insights	          List Docker images/containers, or check individual container details.
--Nginx Viewer	              Show configured domains, ports, and server blocks.
--User Tracking	            List users and their last login times.
--Time-based Queries         Display logs for a specific time range.
--Continuous Monitoring	    Run as a systemd service, logging automatically to
-                              /opt/devopsfetch/logs/devopsfetch.log.
--Formatted Output        	  Uses tabulate for easy-ommands and options.
--Help Flag (-h)	            Quick reference for all c
-##Project structure##
+##Features
+| ###Module	            |    ###Description|
+|--------------------------|------------------|
+|-Port Monitoring	       |   List all active ports & services, or inspect a specific port.|
+|-Docker Insights	       |  List Docker images/containers, or check individual container details.|
+|-Nginx Viewer	            | Show configured domains, ports, and server blocks.|
+|-User Tracking	       |    List users and their last login times.|
+|-Time-based Queries       | Display logs for a specific time range.|
+|-Continuous Monitoring	  | Run as a systemd service, logging automatically to
+                              /opt/devopsfetch/logs/devopsfetch.log.|
+|-Formatted Output         |  Uses tabulate for easy-ommands and options.|
+|-Help Flag (-h)	       |    Quick reference for all c|
+##Project structure
 ```
   devopsfetch/
 ├── devopsfetch.py           # Main CLI tool
@@ -25,28 +26,28 @@
     └── devopsfetch.log      # Automatically generated logs
 ```
 
-   ##Installation##
-###CLone the Repository###
+   ##Installation
+###CLone the Repository
 ```
     git clone https://github.com/<your-username>/devopsfetch.git
     cd devopsfetch
 ```
 
-##Install Dependencies##
+##Install Dependencies
 
-###Ubuntu/Debian###
+###Ubuntu/Debian
 ```
 sudo apt update
 sudo apt install python3 python3-tabulate -y
 ```
 
-###Using pip (Virtual Environment Recommended)###
+###Using pip (Virtual Environment Recommended)
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install tabulate
 ```
-## Make devopsfetch global##
+## Make devopsfetch global
 ```
 sudo cp devopsfetch.py /usr/local/bin/devopsfetch
 sudo chmod +x /usr/local/bin/devopsfetch
@@ -87,7 +88,7 @@ Sample log entry:
 2025-10-09T10:45:15 - Docker info queried all containers
 2025-10-09T10:45:22 - Users info queried all users
 ```
-## Continuous Monitoring with systemd##
+## Continuous Monitoring with systemd
 Copy Service File
 `
 sudo cp service/devopsfetch.service /etc/systemd/system/
@@ -126,7 +127,7 @@ devopsfetch -h
 
 Displays full command-line options and usage instructions.
 
-##Summary##
+##Summary
 
 DevOpsFetch provides automated system inspection, tabulated output, logging, and optional monitoring via systemd — all designed for quick DevOps server insights.
 
