@@ -1,8 +1,7 @@
 # DevOpsFetch — Server Information Retrieval & Monitoring Tool
 
 ## objective
-    
-     DevOpsFetch is a command-line tool designed for DevOps engineers to retrieve, display, and monitor critical server information. It provides real-time insights into active ports, Docker containers, Nginx configurations, and user logins, with integrated logging and 
+   DevOpsFetch is a command-line tool designed for DevOps engineers to retrieve, display, and monitor critical server information. It provides real-time insights into active ports, Docker containers, Nginx configurations, and user logins, with integrated logging and 
 
 ## Features
 | ### Module	            |    ### Description|
