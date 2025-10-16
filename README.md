@@ -57,17 +57,17 @@ Now you can run:
 devopsfetch -p
 `
 ## Usage Examples
-|Command|	|Description|
-|-------| |-----------|
-|`devopsfetch -p`|	|List all active ports|
-|`devopsfetch -p 80`|	|Show details for port 80|
-|`devopsfetch -d`|	|List Docker images & containers|
-|`devopsfetch -d <container_name>`|	|Inspect a specific container|
-|`devopsfetch -n`|	|List all Nginx domains and ports|
-|`devopsfetch -n example.com`|	|Show Nginx config for a domain|
-|`devopsfetch -u`|	|List all users and last login times|
-|`devopsfetch -u`| |username	Show info for a specific user|
-|`devopsfetch -t "2025-10-09 10:00:00" "2025-10-09 12:00:00"`|	|Show logs between two timestamps|
+|Command	|Description|
+|------- |-----------|
+|`devopsfetch -p`|	List all active ports|
+|`devopsfetch -p 80`|	Show details for port 80|
+|`devopsfetch -d`|	List Docker images & containers|
+|`devopsfetch -d <container_name>`|	Inspect a specific container|
+|`devopsfetch -n`|	List all Nginx domains and ports|
+|`devopsfetch -n example.com`|	Show Nginx config for a domain|
+|`devopsfetch -u`|	List all users and last login times|
+|`devopsfetch -u`| username	Show info for a specific user|
+|`devopsfetch -t "2025-10-09 10:00:00" "2025-10-09 12:00:00"`|	Show logs between two timestamps|
   
   ## LOgs
 
