@@ -1,10 +1,11 @@
-#DevOpsFetch — Server Information Retrieval & Monitoring Tool
+# DevOpsFetch — Server Information Retrieval & Monitoring Tool
 
-##objective
+## objective
+    
      DevOpsFetch is a command-line tool designed for DevOps engineers to retrieve, display, and monitor critical server information. It provides real-time insights into active ports, Docker containers, Nginx configurations, and user logins, with integrated logging and 
 
-##Features
-| ###Module	            |    ###Description|
+## Features
+| ### Module	            |    ### Description|
 |--------------------------|------------------|
 |-Port Monitoring	       |   List all active ports & services, or inspect a specific port.|
 |-Docker Insights	       |  List Docker images/containers, or check individual container details.|
@@ -14,7 +15,7 @@
 |-Continuous Monitoring	  | Run as a systemd service, logging automatically to   /opt/devopsfetch/logs/devopsfetch.log.|
 |-Formatted Output         |  Uses tabulate for easy-ommands and options.|
 |-Help Flag (-h)	       |    Quick reference for all c|
-##Project structure
+## Project structure
 ```
   devopsfetch/
 ├── devopsfetch.py           # Main CLI tool
@@ -25,22 +26,22 @@
     └── devopsfetch.log      # Automatically generated logs
 ```
 
-   ##Installation
-###CLone the Repository
+   ## Installation
+### Clone the Repository
 ```
     git clone https://github.com/<your-username>/devopsfetch.git
     cd devopsfetch
 ```
 
-##Install Dependencies
+## Install Dependencies
 
-###Ubuntu/Debian
+### Ubuntu/Debian
 ```
 sudo apt update
 sudo apt install python3 python3-tabulate -y
 ```
 
-###Using pip (Virtual Environment Recommended)
+### Using pip (Virtual Environment Recommended)
 ```
 python3 -m venv venv
 source venv/bin/activate
@@ -126,7 +127,7 @@ devopsfetch -h
 
 Displays full command-line options and usage instructions.
 
-##Summary
+## Summary
 
 DevOpsFetch provides automated system inspection, tabulated output, logging, and optional monitoring via systemd — all designed for quick DevOps server insights.
 
